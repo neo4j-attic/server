@@ -73,8 +73,8 @@ public class AdminPropertiesService {
         String lowerCaseKey = key.toLowerCase();
         String value = null;
 
-        final URI managementApiUri = uriInfo.getBaseUri().resolve( ".." + "/manage");
-        final URI restApiUri = uriInfo.getBaseUri().resolve( ".." + "/data");
+        final URI managementApiUri = uriInfo.getBaseUri().resolve( ".." + "/manage/");
+        final URI restApiUri = uriInfo.getBaseUri().resolve( ".." + "/data/");
         if ("neo4j-servers".equals(lowerCaseKey)) {
             return output.ok(new MappingRepresentation("neo4j-servers") {
                 @Override
