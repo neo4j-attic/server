@@ -40,7 +40,7 @@ public class BootStrapper
     public static final Integer GRAPH_DATABASE_STARTUP_ERROR_CODE = 2;
     public static final String KEY_LOG4J_CONFIG_XML_PATH = "log4j.config.xml.path";
 
-    private NeoServer server;
+    private NeoServerJetty server;
 
     public void controlEvent(int arg) {
         // Do nothing, required by the WrapperListener interface
@@ -55,7 +55,7 @@ public class BootStrapper
         try {
             StartupHealthCheck startupHealthCheck = new StartupHealthCheck(new ConfigFileMustBePresentRule());
             Jetty6WebServer webServer = new Jetty6WebServer();
-            server = new NeoServer(new AddressResolver(), startupHealthCheck,
+            server = new NeoServerJetty(new AddressResolver(), startupHealthCheck,
                     getConfigFile(),
                     webServer);
             server.start();
@@ -72,8 +72,9 @@ public class BootStrapper
 
             return OK;
         } catch (TransactionFailureException tfe) {
+            // TODO use exception to transport error-information
             tfe.printStackTrace();
-            log.error( String.format( "Failed to start Neo Server on port [%d], because ", server.restApiUri().getPort() ) + tfe
+            log.error( String.format( "Failed to start Neo Server on port [%d], because ", server.getWebServerPort() ) + tfe
                 + ". Another process may be using database location " + server.getDatabase().getLocation() );
             return GRAPH_DATABASE_STARTUP_ERROR_CODE;
         } catch (Exception e) {
