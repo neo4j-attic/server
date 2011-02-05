@@ -46,15 +46,13 @@ public class AdminPropertiesServiceTest {
     {
         UriInfo mockUri = mock( UriInfo.class );
         when( mockUri.getBaseUri() ).thenReturn( new URI( "http://peteriscool.com:6666/" ) );
-        
+
         NeoServer mockServer = mock(NeoServer.class);
-        when(mockServer.managementApiUri()).thenReturn(new URI( "http://peteriscool.com:6666/management" ));
-        when(mockServer.restApiUri()).thenReturn(new URI( "http://peteriscool.com:6666/data" ));
-        
+
         Configuration dummyConfig = mock(Configuration.class);
         when(dummyConfig.getProperty("foo")).thenReturn("bar");
         when(dummyConfig.containsKey("foo")).thenReturn(true);
-        
+
         when(mockServer.getConfiguration()).thenReturn(dummyConfig);
 
         AdminPropertiesService adminPropertiesService = new AdminPropertiesService( mockUri,
@@ -70,10 +68,8 @@ public class AdminPropertiesServiceTest {
         UriInfo mockUri = mock(UriInfo.class);
         URI baseUri = new URI("http://peteriscool.com:6666/foo/bar?awesome=true");
         when(mockUri.getBaseUri()).thenReturn(baseUri);
-        
+
         NeoServer mockServer = mock(NeoServer.class);
-        when(mockServer.managementApiUri()).thenReturn(new URI( "http://peteriscool.com:6666/management" ));
-        when(mockServer.restApiUri()).thenReturn(new URI( "http://peteriscool.com:6666/data" ));
 
         AdminPropertiesService adminPropertiesService = new AdminPropertiesService(mockUri, mockServer, new OutputFormat(new JsonFormat(), baseUri, null));
 
@@ -81,8 +77,8 @@ public class AdminPropertiesServiceTest {
 
         String entity = new String((byte[]) response.getEntity(), "UTF-8");
         assertIsValidJson(entity);
-        assertThat(entity, containsString(mockServer.managementApiUri().toString()));
-        assertThat(entity, containsString(mockServer.restApiUri().toString()));
+        assertThat(entity, containsString("http://peteriscool.com:6666/manage"));
+        assertThat(entity, containsString("http://peteriscool.com:6666/data"));
     }
 
     private void assertIsValidJson(String entity) throws JsonParseException {
@@ -94,11 +90,9 @@ public class AdminPropertiesServiceTest {
         UriInfo mockUri = mock(UriInfo.class);
         URI baseUri = new URI("http://peteriscool.com:6666/");
         when(mockUri.getBaseUri()).thenReturn(baseUri);
-        
+
         NeoServer mockServer = mock(NeoServer.class);
-        when(mockServer.managementApiUri()).thenReturn(new URI( "http://peteriscool.com:6666/management" ));
-        when(mockServer.restApiUri()).thenReturn(new URI( "http://peteriscool.com:6666/data" ));
-        
+
         Configuration dummyConfig = mock(Configuration.class);
         when(mockServer.getConfiguration()).thenReturn(dummyConfig);
 

@@ -53,6 +53,8 @@ import org.neo4j.server.rest.repr.MappingSerializer;
 import org.neo4j.server.rest.repr.OutputFormat;
 import org.neo4j.server.rest.repr.ValueRepresentation;
 
+import java.net.URI;
+
 @Path("/properties")
 public class AdminPropertiesService {
     private final UriInfo uriInfo;
@@ -71,6 +73,8 @@ public class AdminPropertiesService {
         String lowerCaseKey = key.toLowerCase();
         String value = null;
 
+        final URI managementApiUri = uriInfo.getBaseUri().resolve( ".." + "/manage");
+        final URI restApiUri = uriInfo.getBaseUri().resolve( ".." + "/data");
         if ("neo4j-servers".equals(lowerCaseKey)) {
             return output.ok(new MappingRepresentation("neo4j-servers") {
                 @Override
@@ -78,16 +82,16 @@ public class AdminPropertiesService {
                     serializer.putMapping(uriInfo.getBaseUri().toString(), new MappingRepresentation("urls") {
                         @Override
                         protected void serialize(MappingSerializer serializer) {
-                            serializer.putString("url", server.restApiUri().toString());
-                            serializer.putString("manageUrl", server.managementApiUri().toString());
+                            serializer.putString("url", restApiUri.toString());
+                            serializer.putString("manageUrl", managementApiUri.toString());
                         }
                     });
                 }
             });
         } else if (Configurator.REST_API_PATH_PROPERTY_KEY.endsWith(lowerCaseKey)) {
-            value = server.restApiUri().toString();
+            value = restApiUri.toString();
         } else if (Configurator.WEB_ADMIN_PATH_PROPERTY_KEY.endsWith(lowerCaseKey)) {
-            value = server.managementApiUri().toString();
+            value = managementApiUri.toString();
         } else {
             if(server.getConfiguration().containsKey(lowerCaseKey)) {
                 value = (String) server.getConfiguration().getProperty(lowerCaseKey);
