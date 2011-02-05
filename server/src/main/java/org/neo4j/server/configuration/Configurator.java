@@ -20,8 +20,6 @@
 package org.neo4j.server.configuration;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
@@ -85,7 +83,6 @@ public class Configurator {
 
         try {
             loadPropertiesConfig(propertiesFile);
-            normalizeUris();
             if (v != null) {
                 v.validate(this.configuration());
             }
@@ -108,45 +105,6 @@ public class Configurator {
             String failed = String.format("Error processing [%s], configuration file has failed validation.", configFile.getAbsolutePath());
             log.fatal(failed);
             throw new InvalidServerConfigurationException(failed);
-        }
-    }
-
-    private void normalizeUris() {
-        try {
-            for (String key : new String[] { WEB_ADMIN_PATH_PROPERTY_KEY, REST_API_PATH_PROPERTY_KEY }) {
-                if (configuration().containsKey(key)) {
-                    URI normalizedUri = makeAbsoluteAndNormalized(new URI((String) configuration().getProperty(key)));
-                    configuration().clearProperty(key);
-                    configuration().addProperty(key, normalizedUri.toString());
-                }
-            }
-
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    private URI makeAbsoluteAndNormalized(URI uri) {
-        if (uri.isAbsolute())
-            return uri.normalize();
-
-        String portNo = (String) configuration().getProperty(WEBSERVER_PORT_PROPERTY_KEY);
-        if (portNo == null)
-            portNo = "80";
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("http://localhost");
-        if (portNo != "80") {
-            sb.append(":");
-            sb.append(portNo);
-        }
-        sb.append("/");
-        sb.append(uri.toString());
-        try {
-            return new URI(sb.toString()).normalize();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
         }
     }
 

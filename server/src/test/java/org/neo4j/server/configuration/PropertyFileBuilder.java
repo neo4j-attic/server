@@ -31,8 +31,6 @@ public class PropertyFileBuilder {
     private String portNo = "7474";
     private String dbDir = "/tmp/neo.db";
     private String rrdbDir = "/tmp/neo.rr.db";
-    private String webAdminUri = "http://localhost:7474/db/manage/";
-    private String webAdminDataUri = "http://localhost:7474/db/data/";
     private String dbTuningPropertyFile = null;
     private ArrayList<Tuple> nameValuePairs = new ArrayList<Tuple>();
 
@@ -58,8 +56,6 @@ public class PropertyFileBuilder {
             writePropertyToFile(Configurator.WEBSERVER_PORT_PROPERTY_KEY, portNo, temporaryConfigFile);
         }
         writePropertyToFile(Configurator.WEBADMIN_NAMESPACE_PROPERTY_KEY + ".rrdb.location", rrdbDir, temporaryConfigFile);
-        writePropertyToFile(Configurator.WEB_ADMIN_PATH_PROPERTY_KEY, webAdminUri, temporaryConfigFile);
-        writePropertyToFile(Configurator.REST_API_PATH_PROPERTY_KEY, webAdminDataUri, temporaryConfigFile);
         if(dbTuningPropertyFile != null) {
             writePropertyToFile(Configurator.DB_TUNING_PROPERTY_FILE_KEY, dbTuningPropertyFile, temporaryConfigFile);
         }
