@@ -33,6 +33,7 @@ import javax.management.MalformedObjectNameException;
 
 import org.apache.commons.configuration.Configuration;
 import org.neo4j.server.configuration.Configurator;
+import org.neo4j.server.configuration.PropertyFileConfigurator;
 import org.neo4j.server.configuration.ThirdPartyJaxRsPackage;
 import org.neo4j.server.configuration.validation.DatabaseLocationMustBeSpecifiedRule;
 import org.neo4j.server.configuration.validation.Validator;
@@ -100,7 +101,7 @@ public class NeoServerJetty implements NeoServer {
     }
 
     private void validateConfiguration() {
-        this.configurator = new Configurator(new Validator(new DatabaseLocationMustBeSpecifiedRule()), configFile);
+        this.configurator = new PropertyFileConfigurator(new Validator(new DatabaseLocationMustBeSpecifiedRule()), configFile);
     }
 
     private void startDatabase() {
