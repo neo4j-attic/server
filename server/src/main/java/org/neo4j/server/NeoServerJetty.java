@@ -52,6 +52,7 @@ import org.rrd4j.core.RrdDb;
 
 public class NeoServerJetty implements NeoServer {
 
+    private static final String ROOT_PATH = "/";
     private static final String DEFAULT_WEB_ADMIN_REST_API_PATH = "/db/manage";
     private static final String DEFAULT_REST_API_PATH = "/db/data";
 
@@ -136,7 +137,7 @@ public class NeoServerJetty implements NeoServer {
                                                                                                            // now
         webServer.addStaticContent(Configurator.DEFAULT_WEB_ADMIN_STATIC_WEB_CONTENT_LOCATION, Configurator.DEFAULT_WEB_ADMIN_PATH);
 
-        System.out.println(String.format("Neo4j server webadmin URI [%s]", Configurator.DEFAULT_WEB_ADMIN_PATH));
+        webServer.addJAXRSPackages(listFrom(new String[] { Configurator.ROOT_DISCOVERY_REST_API_PACKAGE }), ROOT_PATH);
 
         log.info("Mounting management API at [%s]", DEFAULT_WEB_ADMIN_REST_API_PATH);
         webServer.addJAXRSPackages(listFrom(new String[] { Configurator.WEB_ADMIN_REST_API_PACKAGE }), DEFAULT_WEB_ADMIN_REST_API_PATH);

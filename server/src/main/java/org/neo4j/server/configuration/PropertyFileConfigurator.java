@@ -20,6 +20,8 @@
 package org.neo4j.server.configuration;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
@@ -63,6 +65,7 @@ public class PropertyFileConfigurator implements Configurator {
 
         try {
             loadPropertiesConfig(propertiesFile);
+            normalizeUris();
             if (v != null) {
                 v.validate(this.configuration());
             }
@@ -88,6 +91,45 @@ public class PropertyFileConfigurator implements Configurator {
         }
     }
 
+    private void normalizeUris() {
+        try {
+            for (String key : new String[] { WEB_ADMIN_PATH_PROPERTY_KEY, REST_API_PATH_PROPERTY_KEY }) {
+                if (configuration().containsKey(key)) {
+                    URI normalizedUri = makeAbsoluteAndNormalized(new URI((String) configuration().getProperty(key)));
+                    configuration().clearProperty(key);
+                    configuration().addProperty(key, normalizedUri.toString());
+                }
+            }
+
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private URI makeAbsoluteAndNormalized(URI uri) {
+        if (uri.isAbsolute())
+            return uri.normalize();
+
+        String portNo = (String) configuration().getProperty(WEBSERVER_PORT_PROPERTY_KEY);
+        if (portNo == null)
+            portNo = "80";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("http://localhost");
+        if (portNo != "80") {
+            sb.append(":");
+            sb.append(portNo);
+        }
+        sb.append("/");
+        sb.append(uri.toString());
+        try {
+            return new URI(sb.toString()).normalize();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void loadDatabaseTuningProperties() {
         String databaseTuningPropertyFileLocation = serverConfiguration.getString(DB_TUNING_PROPERTY_FILE_KEY);
 
@@ -96,7 +138,7 @@ public class PropertyFileConfigurator implements Configurator {
         }
 
         File databaseTuningPropertyFile = new File(databaseTuningPropertyFileLocation);
-        
+
         if (!databaseTuningPropertyFile.exists()) {
             log.warn("The specified file for database performance tuning properties [%s] does not exist.", databaseTuningPropertyFileLocation);
             return;

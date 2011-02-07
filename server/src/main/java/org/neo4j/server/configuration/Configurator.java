@@ -48,6 +48,7 @@ public interface Configurator {
     String WEB_ADMIN_PATH_PROPERTY_KEY = "org.neo4j.server.webadmin.management.uri";
     String REST_API_PATH_PROPERTY_KEY = "org.neo4j.server.webadmin.data.uri";
     String THIRD_PARTY_PACKAGES_KEY = "org.neo4j.server.thirdparty_jaxrs_classes";
+    String ROOT_DISCOVERY_REST_API_PACKAGE = "org.neo4j.server.rest.discovery";
 
     Configuration configuration();
 
