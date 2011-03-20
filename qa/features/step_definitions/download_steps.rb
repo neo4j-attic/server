@@ -20,7 +20,7 @@ Given /^a web site at host "([^"]*)"$/ do |host|
 end
 
 When /^I download Neo4j \(if I haven't already\)$/ do
-  `/opt/local/bin/wget -c -O #{archive_name} #{neo4j.download_host}/#{archive_name}`
+  `wget -c -O #{archive_name} #{neo4j.download_host}/#{archive_name}`
   fail 'download did not succeed' unless $?.to_i == 0
 end
 
