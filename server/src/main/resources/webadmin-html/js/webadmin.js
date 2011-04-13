@@ -29,8 +29,8 @@
     }
     return _results;
   };
-  require(["neo4j/webadmin/DashboardController", "neo4j/webadmin/DataBrowserController", "neo4j/webadmin/ConsoleController", "neo4j/webadmin/ServerInfoController", "neo4j/webadmin/models/ApplicationState", "neo4j/webadmin/views/BaseView", "neo4j/webadmin/ui/FoldoutWatcher", "neo4j/webadmin/KeyboardShortcuts", "lib/jquery", "lib/neo4js", "lib/backbone"], function(DashboardController, DataBrowserController, ConsoleController, ServerInfoController, ApplicationState, BaseView, FoldoutWatcher, KeyboardShortcuts) {
-    var appState, baseView, consoleController, dashboardController, databrowserController, foldoutWatcher, serverInfoController, shortcuts;
+  require(["neo4j/webadmin/DashboardController", "neo4j/webadmin/DataBrowserController", "neo4j/webadmin/ConsoleController", "neo4j/webadmin/ServerInfoController", "neo4j/webadmin/models/ApplicationState", "neo4j/webadmin/views/BaseView", "neo4j/webadmin/ui/FoldoutWatcher", "neo4j/webadmin/KeyboardShortcuts", "neo4j/webadmin/templates/splash", "lib/jquery", "lib/neo4js", "lib/backbone"], function(DashboardController, DataBrowserController, ConsoleController, ServerInfoController, ApplicationState, BaseView, FoldoutWatcher, KeyboardShortcuts, splashTemplate) {
+    var appState, baseView, consoleController, dashboardController, databrowserController, foldoutWatcher, launchApp, serverInfoController, shortcuts;
     appState = new ApplicationState;
     appState.set({
       server: new neo4j.GraphDatabase(location.protocol + "//" + location.host)
@@ -38,7 +38,6 @@
     baseView = new BaseView({
       appState: appState
     });
-    $("body").append(baseView.el);
     dashboardController = new DashboardController(appState);
     databrowserController = new DataBrowserController(appState);
     consoleController = new ConsoleController(appState);
@@ -47,6 +46,10 @@
     foldoutWatcher.init();
     shortcuts = new KeyboardShortcuts(dashboardController, databrowserController, consoleController, serverInfoController);
     shortcuts.init();
-    return Backbone.history.start();
+    launchApp = function() {
+      $("body").empty().append(baseView.el);
+      return Backbone.history.start();
+    };
+    return launchApp();
   });
 }).call(this);
